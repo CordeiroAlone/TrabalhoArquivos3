@@ -20,6 +20,7 @@
 #include "arvoreB/DELETE.h"
 #include "merge/SELECTDUPLO.h"
 #include "merge/SELECTUNICO.h"
+#include "merge/ORDENAR.h"
 
 int main(void) {
     int comando;
@@ -125,6 +126,13 @@ int main(void) {
 
         scanf(" %s %s %s %s %s",lista1,temp,lista2,temp2,lista3);
         buscaUnico(lista1,lista2,lista3);
+    }else if(comando == 13){
+        char desordenada[40];
+        char ordenada[40];
+        char Stipo[20];
+
+        scanf(" %s %s %s",desordenada,Stipo,ordenada);
+        ordenacao(desordenada,ordenada,Stipo);
     } else {
         printf("Comando Inválido\n");
     }

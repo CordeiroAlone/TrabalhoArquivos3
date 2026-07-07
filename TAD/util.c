@@ -223,6 +223,36 @@ void estacao_para_binario(estacao *est, int index ,FILE* arquivo){
     }
 }
 
+void estacao_para_binario_apontado(estacao *est ,FILE* arquivo){
+    int bytesusados = 37; // A parte de tamanho fixo do registro tem 37 bytes. (Sem contar com tamanho das strings)
+
+    // Atualiza cada campo do registro.
+    fwrite(&est->removido,sizeof(char),1,arquivo);
+    fwrite(&est->proximo,sizeof(int),1,arquivo);
+    fwrite(&est->codEstacao,sizeof(int),1,arquivo);
+    fwrite(&est->codLinha,sizeof(int),1,arquivo);
+    fwrite(&est->codProxEstacao,sizeof(int),1,arquivo);
+    fwrite(&est->distProxEstacao,sizeof(int),1,arquivo);
+    fwrite(&est->codLinhaIntegra,sizeof(int),1,arquivo);
+    fwrite(&est->codEstIntegra,sizeof(int),1,arquivo);
+
+    // Atualizando nomeEstacao e nomeLinha
+    int tam = 0;
+    while(est->nomeEstacao[tam] != 0) tam++; // Conta a quantidade de caracteres do nomeEstacao (parando antes do \0)
+    fwrite(&tam,sizeof(int),1,arquivo);
+    bytesusados += tam;
+    fwrite(est->nomeEstacao,sizeof(char) * tam,1,arquivo);
+    tam = 0;
+    while(est->nomeLinha[tam] != 0) tam++; // Conta a quantidade de caracteres do nomeLinha (parando antes do \0)
+    fwrite(&tam,sizeof(int),1,arquivo);
+    bytesusados += tam;
+    fwrite(est->nomeLinha,sizeof(char) * tam,1,arquivo);
+    for(int i = bytesusados; i < 80; i++){ // Preenche o lixo com cifrao ($)
+        fwrite(&cifrao,sizeof(char),1,arquivo);
+    }
+}
+
+
 // Função contrária do estacao_para_binario. Recebe um arquivo e uma RRN e atualiza esses dados na estacao "est".
 
 // estacao *est: Struct da estação que no final representará o mesmo que o binario do arquivo.

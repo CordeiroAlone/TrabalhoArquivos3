@@ -44,6 +44,8 @@ void pegar_info_estacao(estacao *nova,int rep);
 
 // Recebe uma estação e sua RRN e atualiza o seu registro no arquivo binario.
 void estacao_para_binario(estacao *est, int index ,FILE* arquivo);
+// Recebe uma estação e coloca o seu registro no arquivo binario.
+void estacao_para_binario_apontado(estacao *est ,FILE* arquivo);
 // Função contrária do estacao_para_binario. Recebe um arquivo e uma RRN e atualiza esses dados na estacao "est".
 void binario_para_estacao(estacao *est, int index,FILE* arquivo);
 //Função similar a de cima só que com peculiaridades para encaixar no buscar. (começa a busca de onde o ponteiro parou e consome o lixo)
