@@ -21,6 +21,7 @@
 #include "merge/SELECTDUPLO.h"
 #include "merge/SELECTUNICO.h"
 #include "merge/ORDENAR.h"
+#include "merge/ORDINTER.h"
 
 int main(void) {
     int comando;
@@ -133,7 +134,15 @@ int main(void) {
 
         scanf(" %s %s %s",desordenada,Stipo,ordenada);
         ordenacao(desordenada,ordenada,Stipo);
-    } else {
+    }else if(comando == 14){
+        char lista1[40];
+        char lista2[40];
+        char temp[40];
+        char temp2[40];
+
+        scanf(" %s %s %s %s",lista1,temp,lista2,temp);
+        ordintercala(lista1,lista2);
+    }else {
         printf("Comando Inválido\n");
     }
 }

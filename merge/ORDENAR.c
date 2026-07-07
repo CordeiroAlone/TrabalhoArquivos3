@@ -1,17 +1,8 @@
 #include "ORDENAR.h"
 #include "../TAD/util.h"
-#include "../TAD/fornecidas.h" //lembrar de atualizar o cabeçalho no final
+#include "../TAD/fornecidas.h"
 
-void ordem(FILE *arquivo_en, char *destino, bool qual){ //se qual for 0 é codestação, se for 1 é codproxestação
-    FILE *arquivo_sa = fopen(destino, "wb");
-
-    fwrite(&c_zero,sizeof(char),1,arquivo_sa); //Demarcar o arquivo como instável no começo
-
-    for(int i = 0; i < 16; i++) {
-        // Inicializar o cabeçalho todo com zero para podermos colocar as estações corretamente
-        fwrite(&zero, 1, 1, arquivo_sa); 
-    }
-
+estacao *ordem(FILE *arquivo_en, bool qual, int* ultimo){ //se qual for 0 é codestação, se for 1 é codproxestação
     fseek(arquivo_en,5,SEEK_SET);
     int tam;
     fread(&tam, sizeof(int), 1, arquivo_en);
@@ -50,36 +41,8 @@ void ordem(FILE *arquivo_en, char *destino, bool qual){ //se qual for 0 é codes
             }
         }
     }
-
-    int qtdpares = 0;
-    for(int i = 0; i < topo; i++){
-        if(lista[i].codProxEstacao != -1) qtdpares++;
-        lista[i].removido = '0';
-        estacao_para_binario_apontado(&(lista[i]),arquivo_sa);
-        liberar_memoria_estacao(&(lista[i]));
-    }
-
-    free(lista);
-
-    fseek(arquivo_sa,1,SEEK_SET);
-    int menosum = -1;
-    fwrite(&menosum,sizeof(int),1,arquivo_sa);
-    fwrite(&topo,sizeof(int),1,arquivo_sa);
-    
-    int qtdest,qtdparesest;
-    fseek(arquivo_en,9,SEEK_SET);
-    fread(&qtdest, sizeof(int), 1, arquivo_en);
-    fread(&qtdparesest, sizeof(int), 1, arquivo_en);
-    fwrite(&qtdest,sizeof(int),1,arquivo_sa);
-    fwrite(&qtdparesest,sizeof(int),1,arquivo_sa);
-    
-    //fwrite(&topo,sizeof(int),1,arquivo_sa); (por algum motivo não dá certo)?
-    //fwrite(&qtdpares,sizeof(int),1,arquivo_sa);
-
-    //marcar como estável
-    fseek(arquivo_sa,0,SEEK_SET);
-    fwrite(&c_um,sizeof(char),1,arquivo_sa);
-    fclose(arquivo_sa);
+    *ultimo = topo;
+    return lista;
 }
 
 void ordenacao(char *bin1, char *bin2, char* Stipo){
@@ -94,8 +57,48 @@ void ordenacao(char *bin1, char *bin2, char* Stipo){
     FILE *arquivo1 = abrir_arquivo_validar(bin1, "rb");
     if(arquivo1 == NULL) return;
 
-    ordem(arquivo1,bin2,tipo);
 
+    int topo;
+    estacao* lista = ordem(arquivo1,tipo,&topo);
+
+    FILE *arquivo2 = fopen(bin2, "wb");
+
+    fwrite(&c_zero,sizeof(char),1,arquivo2); //Demarcar o arquivo como instável no começo
+
+    for(int i = 0; i < 16; i++) {
+        // Inicializar o cabeçalho todo com zero para podermos colocar as estações corretamente
+        fwrite(&zero, 1, 1, arquivo2); 
+    }
+
+    int qtdpares = 0;
+    for(int i = 0; i < topo; i++){
+        if(lista[i].codProxEstacao != -1) qtdpares++;
+        lista[i].removido = '0';
+        estacao_para_binario_apontado(&(lista[i]),arquivo2);
+        liberar_memoria_estacao(&(lista[i]));
+    }
+
+    free(lista);
+
+    fseek(arquivo2,1,SEEK_SET);
+    int menosum = -1;
+    fwrite(&menosum,sizeof(int),1,arquivo2);
+    fwrite(&topo,sizeof(int),1,arquivo2);
+    
+    int qtdest,qtdparesest;
+    fseek(arquivo1,9,SEEK_SET);
+    fread(&qtdest, sizeof(int), 1, arquivo1);
+    fread(&qtdparesest, sizeof(int), 1, arquivo1);
+    fwrite(&qtdest,sizeof(int),1,arquivo2);
+    fwrite(&qtdparesest,sizeof(int),1,arquivo2);
+    
+    //fwrite(&topo,sizeof(int),1,arquivo2); (por algum motivo não dá certo)?
+    //fwrite(&qtdpares,sizeof(int),1,arquivo2);
+
+    //marcar como estável
+    fseek(arquivo2,0,SEEK_SET);
+    fwrite(&c_um,sizeof(char),1,arquivo2);
+    fclose(arquivo2);
 
     fclose(arquivo1);
     BinarioNaTela(bin2);
