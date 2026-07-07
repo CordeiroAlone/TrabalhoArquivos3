@@ -18,6 +18,7 @@
 #include "arvoreB/INSERT_INTO.h"
 #include "arvoreB/SELECT.h"
 #include "arvoreB/DELETE.h"
+#include "merge/SELECTDUPLO.h"
 
 int main(void) {
     int comando;
@@ -106,6 +107,14 @@ int main(void) {
         scanf(" %d",&n);
         
         DELETE_AR(lista,arvore,n);
+    } else if(comando == 11){
+        char lista1[40];
+        char lista2[40];
+        char temp[40];
+        char temp2[40];
+
+        scanf(" %s %s %s %s",lista1,temp,lista2,temp2);
+        buscaDuplo(lista1,lista2);
     } else {
         printf("Comando Inválido\n");
     }

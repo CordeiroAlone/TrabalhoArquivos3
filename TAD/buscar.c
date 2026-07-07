@@ -19,11 +19,9 @@ bool satisfazBase(estacao* base, estacao* temp) {
     if(base->codEstacao != -1 && base->codEstacao != temp->codEstacao) {
         return false; 
     }
-
     if(base->codLinha != -1 && base->codLinha != temp->codLinha) {
         return false;
     }
-
     if(base->codProxEstacao != -1) {
         if(base->codProxEstacao == -2) { // NULO
             if(temp->codProxEstacao != -1) return false;
@@ -31,7 +29,6 @@ bool satisfazBase(estacao* base, estacao* temp) {
             if(temp->codProxEstacao != base->codProxEstacao) return false;
         }
     }
-
     if(base->distProxEstacao != -1 && base->distProxEstacao != temp->distProxEstacao) {
         if(base->distProxEstacao == -2) { // NULO
             if(temp->distProxEstacao != -1) return false;
@@ -39,7 +36,6 @@ bool satisfazBase(estacao* base, estacao* temp) {
             if(temp->distProxEstacao != base->distProxEstacao) return false;
         }
     }
-
     if(base->codLinhaIntegra != -1) {
         if(base->codLinhaIntegra == -2) { // NULO
             if(temp->codLinhaIntegra != -1) return false;
@@ -47,7 +43,6 @@ bool satisfazBase(estacao* base, estacao* temp) {
             if(temp->codLinhaIntegra != base->codLinhaIntegra) return false;
         }
     }
-
     if(base->codEstIntegra != -1) {
         if(base->codEstIntegra == -2){
             if(temp->codEstIntegra != -1) return false;
@@ -55,16 +50,14 @@ bool satisfazBase(estacao* base, estacao* temp) {
             if(temp->codEstIntegra != base->codEstIntegra) return false;
         }
     }
-
     if(base->nomeEstacao != NULL && strcmp(base->nomeEstacao, temp->nomeEstacao) != 0) {
         return false;
     }
-
     if(base->nomeLinha != NULL && strcmp(base->nomeLinha, temp->nomeLinha) != 0) {
         return false;
     }
-
-    return true; // A estação temp satisfaz as condições para busca
+    // Caso chegue até aqui, a estação temp satisfaz as condições para busca
+    return true;
 }
 
 // Itera pelo arquivo de registros e Imprime, Deleta ou Atualiza registros que satisfazerem a base
@@ -144,6 +137,8 @@ int iterar_estacao(estacao* base, FILE* arquivo, Funcionalidade funcionalidade, 
 }
 
 // No comando select, após encontrar uma estação que satisfaz a base, basta imprimi-lo.
+
+// estacao* temp: estacao para ser imprimido
 void fazer_select(estacao* temp) {
     printar_estacao(temp);
     liberar_memoria_estacao(temp);
@@ -152,6 +147,10 @@ void fazer_select(estacao* temp) {
 }
 
 // No comando delete, após encontrar uma estação que satisfaz a base, basta marcar "removidos" como 1.
+
+// FILE* arquivo: arquivo onde ocorre a deleção
+// RRN: indice da estacao no arquivo para marcar como removido
+// topo: topo da pilha de removidos para atualizar
 void fazer_delete(FILE* arquivo, int RRN, int* topo) {
     fseek(arquivo, 17 + (80) * RRN, SEEK_SET);        // Cabeçalho tem 17 bytes, cada registro tem tamanho 80.
     fwrite(&c_um,sizeof(char),1,arquivo);                  // Troca o removidos para 1
@@ -165,17 +164,20 @@ void fazer_delete(FILE* arquivo, int RRN, int* topo) {
 // Coloca as informações de uma estacao(mudanca) para outra(mudar).
 // Se um campo da struct for -1, significa que não precisa mudar esse campo
 // Se o campo da struct for -2, significa que esse campo deve ser trocado para NULO (que seria -1).
+
+// estacao* mudar: Estacao que no final deve receber as informações da outra estação
+// estacao* mudanca: Estacao de onde deve vir as mudancas a serem feitas
 void UPDATE_ONE(estacao* mudar, estacao* mudanca){
 
-    // Passa por cada campo, atualizando-o.
+    // Passa por cada campo, atualizando-o.]
+    // Checa primeiro se for -1 (nao precisa atualizar)
+    // e depois se for -2 (deve ser trocado para NULO).
     if(mudanca->codEstacao != -1) {
         mudar->codEstacao = mudanca->codEstacao;
     }
-
     if(mudanca->codLinha != -1) {
         mudar->codLinha = mudanca->codLinha;
     }
-
     if(mudanca->codProxEstacao != -1){
         if(mudanca->codProxEstacao == -2) {
             mudar->codProxEstacao = -1;
@@ -183,7 +185,6 @@ void UPDATE_ONE(estacao* mudar, estacao* mudanca){
             mudar->codProxEstacao = mudanca->codProxEstacao;
         }
     }
-
     if(mudanca->distProxEstacao != -1) {
         if(mudanca->distProxEstacao == -2) {
             mudar->distProxEstacao = -1;
@@ -191,7 +192,6 @@ void UPDATE_ONE(estacao* mudar, estacao* mudanca){
             mudar->distProxEstacao = mudanca->distProxEstacao;
         }
     }
-
     if(mudanca->codLinhaIntegra != -1){
         if(mudanca->codLinhaIntegra == -2){
             mudar->codLinhaIntegra = -1;
@@ -231,6 +231,9 @@ void UPDATE_ONE(estacao* mudar, estacao* mudanca){
 // No comando update, após encontrar uma estação que satisfaz a base, precisamos
 // encontrar o RRN no arquivo binário, atualizar a estação e colocar de volta no arquivo.
 
+// FILE* arquivo: arquivo onde ocorre o update
+// RRN: indice da estacao no arquivo para atualizar
+// estacao* transformar: Inforamções sobre como o arquivo binario deve ser atualizado.
 void fazer_update(FILE* arquivo, int RRN, estacao* transformar) {
     estacao mudar;
 

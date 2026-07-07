@@ -189,6 +189,10 @@ void pegar_info_estacao(estacao *nova,int rep){
 }
 
 // Recebe uma estação e sua RRN e atualiza o seu registro no arquivo binario.
+
+// estacao *est: Struct da estação a ser transformado para binário e atualizado no arquivo.
+// int index: Posição(índice) do arquivo para atualizar
+// FILE* arquivo: Arquivo onde deve ser feito a atualização
 void estacao_para_binario(estacao *est, int index ,FILE* arquivo){
     fseek(arquivo,17 + (80 * index),SEEK_SET); // 17 bytes para o cabeçalho + 80 para cada registro
     int bytesusados = 37; // A parte de tamanho fixo do registro tem 37 bytes. (Sem contar com tamanho das strings)
@@ -220,6 +224,10 @@ void estacao_para_binario(estacao *est, int index ,FILE* arquivo){
 }
 
 // Função contrária do estacao_para_binario. Recebe um arquivo e uma RRN e atualiza esses dados na estacao "est".
+
+// estacao *est: Struct da estação que no final representará o mesmo que o binario do arquivo.
+// int index: Posição(índice) do arquivo de onde vem a atualização
+// FILE* arquivo: Arquivo onde deve ser conseguidos os dados para atualizar.
 void binario_para_estacao(estacao *est, int index,FILE* arquivo){
     fseek(arquivo,17 + (80 * index),SEEK_SET);
 
@@ -245,7 +253,11 @@ void binario_para_estacao(estacao *est, int index,FILE* arquivo){
     est->nomeLinha[est->tamNomeLinha] = '\0';
 }
 
-void binario_para_estacao_apontado(estacao *est,FILE* arquivo){ //Função igual a de cima só que com peculiaridades para encaixar no buscar.
+//Função similar a de cima só que com peculiaridades para encaixar no buscar. (começa a busca de onde o ponteiro parou e consome o lixo)
+
+// estacao *est: Struct da estação que no final representará o mesmo que o binario do arquivo.
+// FILE* arquivo: Arquivo onde deve ser conseguidos os dados para atualizar.
+void binario_para_estacao_apontado(estacao *est,FILE* arquivo){
 
     // Realiza a leitura dos campos de tamanho fixo e atualiza a estação.
     est->removido = 0;
@@ -275,7 +287,27 @@ void binario_para_estacao_apontado(estacao *est,FILE* arquivo){ //Função igual
     }
 }
 
+// Retorna o nome de uma estação a partir do indice e atualiza na variavel nome.
 
+// char **nome: Variavel a ser atualizado com o nome da estação encontrada.
+// FILE* arquivo: Arquivo onde a busca ocorre.
+// int index: indice da estação de onde o nome deve ser buscado.
+void pegaNomeEst(char **nome,FILE* arquivo, int index){
+
+    fseek(arquivo,17 + (80 * index) + 29,SEEK_SET);
+    
+    // Lê o tamanho das strings, aloca o tamanho certo e atualiza a estacao.
+    int tam;
+    fread(&tam,sizeof(int),1,arquivo);
+    *nome = malloc((tam + 1) * sizeof(char));
+    fread(*nome,sizeof(char),tam,arquivo);
+    (*nome)[tam] = '\0'; // Inserindo o terminador de string pois no arquivo binário não tem.
+
+}
+
+// Abre um arquivo usando a string do seu nome e verifica se ele existe e a sua estabilidade.
+// char *arquivoBIN: Nome do arquivo
+// char *modo: Modo de abertura do arquivo
 FILE* abrir_arquivo_validar(char *arquivoBIN, char* modo) {
     // Abertura de arquivos e verificação de validade
     FILE *arquivo = fopen(arquivoBIN, modo);
@@ -296,6 +328,8 @@ FILE* abrir_arquivo_validar(char *arquivoBIN, char* modo) {
     return arquivo;
 }
 
+// Recebe uma estação e desaloca a memória dos strings presente.
+// estacao* est: estacao de onde as strings devem ser desalocadas.
 void liberar_memoria_estacao(estacao* est) {
     if(est->nomeEstacao != NULL) {
         free(est->nomeEstacao);

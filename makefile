@@ -1,5 +1,5 @@
-all: TAD/util.o TAD/fornecidas.o TAD/buscar.o TAD/CREATE.o TAD/DELETE.o TAD/SELECT.o TAD/SELECT_ALL.o TAD/UPDATE.o TAD/INSERT.o arvoreB/INSERT_INTO.o arvoreB/CABECALHO.o arvoreB/CREATE.o arvoreB/INSERT.o arvoreB/NO.o arvoreB/BUSCAR.o arvoreB/SELECT.o arvoreB/DELETE.o arvoreB/DELETE_ONE.o programaTrab.o
-	gcc -g TAD/util.o TAD/fornecidas.o TAD/buscar.o TAD/CREATE.o TAD/DELETE.o TAD/SELECT.o TAD/SELECT_ALL.o TAD/UPDATE.o TAD/INSERT.o arvoreB/INSERT_INTO.o arvoreB/CABECALHO.o arvoreB/CREATE.o arvoreB/INSERT.o arvoreB/NO.o arvoreB/BUSCAR.o arvoreB/SELECT.o arvoreB/DELETE.o arvoreB/DELETE_ONE.o programaTrab.o -o programaTrab -std=c99 -Wall -lm
+all: TAD/util.o TAD/fornecidas.o TAD/buscar.o TAD/CREATE.o TAD/DELETE.o TAD/SELECT.o TAD/SELECT_ALL.o TAD/UPDATE.o TAD/INSERT.o arvoreB/INSERT_INTO.o arvoreB/CABECALHO.o arvoreB/CREATE.o arvoreB/INSERT.o arvoreB/NO.o arvoreB/BUSCAR.o arvoreB/SELECT.o arvoreB/DELETE.o arvoreB/DELETE_ONE.o merge/SELECTDUPLO.o programaTrab.o
+	gcc -g TAD/util.o TAD/fornecidas.o TAD/buscar.o TAD/CREATE.o TAD/DELETE.o TAD/SELECT.o TAD/SELECT_ALL.o TAD/UPDATE.o TAD/INSERT.o arvoreB/INSERT_INTO.o arvoreB/CABECALHO.o arvoreB/CREATE.o arvoreB/INSERT.o arvoreB/NO.o arvoreB/BUSCAR.o arvoreB/SELECT.o arvoreB/DELETE.o arvoreB/DELETE_ONE.o merge/SELECTDUPLO.o programaTrab.o -o programaTrab -std=c99 -Wall -lm
 
 TAD/util.o:
 	gcc -g -c TAD/util.c -o TAD/util.o
@@ -55,6 +55,9 @@ arvoreB/DELETE.o:
 arvoreB/DELETE_ONE.o:
 	gcc -g -c arvoreB/DELETE_ONE.c -o arvoreB/DELETE_ONE.o
 
+merge/SELECTDUPLO.o:
+	gcc -g -c merge/SELECTDUPLO.c -o merge/SELECTDUPLO.o
+
 programaTrab.o:
 	gcc -g -c programaTrab.c -o programaTrab.o
 
@@ -64,6 +67,7 @@ run:
 clean:
 	rm -f TAD/util.o TAD/fornecidas.o TAD/buscar.o TAD/CREATE.o TAD/DELETE.o TAD/SELECT.o TAD/SELECT_ALL.o TAD/UPDATE.o TAD/INSERT.o arvoreB/INSERT_INTO.o
 	rm -f arvoreB/CABECALHO.o arvoreB/CREATE.o arvoreB/INSERT.o arvoreB/NO.o arvoreB/BUSCAR.o arvoreB/SELECT.o arvoreB/DELETE.o arvoreB/DELETE_ONE.o
+	rm -f merge/SELECTDUPLO.o
 	rm -f programaTrab.o
 	rm -f programaTrab
 
@@ -73,7 +77,7 @@ r:
 
 zip:
 	rm -f trab2.zip
-	zip trab2.zip TAD/buscar.c TAD/buscar.h TAD/CREATE.c TAD/CREATE.h TAD/DELETE.c TAD/DELETE.h TAD/fornecidas.c TAD/fornecidas.h TAD/INSERT.c TAD/INSERT.h arvoreB/INSERT_INTO.c arvoreB/INSERT_INTO.h TAD/SELECT_ALL.c TAD/SELECT_ALL.h TAD/SELECT.c TAD/SELECT.h TAD/UPDATE.c TAD/UPDATE.h TAD/util.c TAD/util.h arvoreB/BUSCAR.c arvoreB/BUSCAR.h arvoreB/CABECALHO.c arvoreB/CABECALHO.h arvoreB/CREATE.c arvoreB/CREATE.h arvoreB/INSERT.c arvoreB/INSERT.h arvoreB/NO.c arvoreB/NO.h arvoreB/SELECT.c arvoreB/SELECT.h arvoreB/DELETE.c arvoreB/DELETE.h arvoreB/DELETE_ONE.c arvoreB/DELETE_ONE.h estacoes_removidos.bin estacoes.bin estacoes.csv makefile programaTrab.c
+	zip trab2.zip TAD/buscar.c TAD/buscar.h TAD/CREATE.c TAD/CREATE.h TAD/DELETE.c TAD/DELETE.h TAD/fornecidas.c TAD/fornecidas.h TAD/INSERT.c TAD/INSERT.h arvoreB/INSERT_INTO.c arvoreB/INSERT_INTO.h TAD/SELECT_ALL.c TAD/SELECT_ALL.h TAD/SELECT.c TAD/SELECT.h TAD/UPDATE.c TAD/UPDATE.h TAD/util.c TAD/util.h arvoreB/BUSCAR.c arvoreB/BUSCAR.h arvoreB/CABECALHO.c arvoreB/CABECALHO.h arvoreB/CREATE.c arvoreB/CREATE.h arvoreB/INSERT.c arvoreB/INSERT.h arvoreB/NO.c arvoreB/NO.h arvoreB/SELECT.c arvoreB/SELECT.h arvoreB/DELETE.c arvoreB/DELETE.h arvoreB/DELETE_ONE.c arvoreB/DELETE_ONE.h merge/SELECTDUPLO.c merge/SELECTDUPLO.h estacoes_removidos.bin estacoes.bin estacoes.csv makefile programaTrab.c
 
 subs:
 	cp arq_entrada/* ./
