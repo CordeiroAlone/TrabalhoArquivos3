@@ -1,24 +1,17 @@
 #include "../TAD/util.h"
 #include "SELECTDUPLO.h" //implementar o negocio do loop com menos fseek
 
-void buscaDuplo(char *bin1, char *bin2){
-    FILE *arquivo1 = fopen(bin1, "rb");
-    FILE *arquivo2 = fopen(bin2, "rb");
-   
-    if (arquivo1 == NULL || arquivo2 == NULL) {
-        if(arquivo1 != NULL) fclose(arquivo1);
-        if(arquivo2 != NULL) fclose(arquivo2);
-        printf("Falha no processamento do arquivo.\n");
-        return;
-    }
+// Faz a auto-junção usando o loop aninhado, combinando quando o codProxEstacao do loop externo for igual ao codEstacao do loop interno.
 
-    char status1,status2;
-    fread(&status1, sizeof(char), 1, arquivo1);
-    fread(&status2, sizeof(char), 1, arquivo2);
-    if(status1 == '0' || status2 == '0') {
+// char *bin1: Nome do arquivo usado no loop de fora
+// char *bin2: Nome do arquivo usado no loop de dentro
+void buscaDuplo(char *bin1, char *bin2) {
+    FILE *arquivo1 = abrir_arquivo_validar(bin1, "rb");
+    if (arquivo1 == NULL) return;
+
+    FILE *arquivo2 = abrir_arquivo_validar(bin2, "rb");
+    if (arquivo2 == NULL) {
         fclose(arquivo1);
-        fclose(arquivo2);
-        printf("Falha no processamento do arquivo.\n");
         return;
     }
 
@@ -31,6 +24,7 @@ void buscaDuplo(char *bin1, char *bin2){
 
     fseek(arquivo1, 17,SEEK_SET);
 
+    // loop de fora
     for(int i = 0; i < tam1; i++){
         char delet;
         fread(&delet, sizeof(char),1,arquivo1);
@@ -45,8 +39,9 @@ void buscaDuplo(char *bin1, char *bin2){
         bool achou = false;
         char *nome;
         
+        // loop de dentro
         for(int j = 0; j < tam2; j++){
-            //printf("cheguei no %d\n",j);
+            
             char delet2;
             fseek(arquivo2, 17 + (80 * j),SEEK_SET);
             fread(&delet2,sizeof(char),1,arquivo2);
@@ -55,7 +50,7 @@ void buscaDuplo(char *bin1, char *bin2){
             int codest;
             fseek(arquivo2, 17 + (80 * j) + 5,SEEK_SET);
             fread(&codest,sizeof(int),1,arquivo2);
-            //printf("Encontrei o codigo %d\n",codest);
+            
             if(codest != est.codProxEstacao) continue;
 
             achou = true;
