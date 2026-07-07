@@ -42,12 +42,19 @@ int conta_estacao(FILE* arquivo);
 // Recebe no terminal, rep vezes, campos que devem estar contidas numa estacao e atualiza a estacao *nova.
 void pegar_info_estacao(estacao *nova,int rep);
 
-// 
+// Recebe uma estação e sua RRN e atualiza o seu registro no arquivo binario.
 void estacao_para_binario(estacao *est, int index ,FILE* arquivo);
+// Função contrária do estacao_para_binario. Recebe um arquivo e uma RRN e atualiza esses dados na estacao "est".
 void binario_para_estacao(estacao *est, int index,FILE* arquivo);
+//Função similar a de cima só que com peculiaridades para encaixar no buscar. (começa a busca de onde o ponteiro parou e consome o lixo)
 void binario_para_estacao_apontado(estacao *est,FILE* arquivo);
+
+// Função auxiliar para a abertura de um arquivo, com o modo especifiaco com checagem de estabilidade
 FILE* abrir_arquivo_validar(char *arquivoBin, char *modo);
+// Função auxiliar que desaloca as memórias das strings de uma estação 
 void liberar_memoria_estacao(estacao* est);
+
+// Função auxiliar que retorna o nome de uma estacao no char** nome, a partir do seu indice no arquivo.
 void pegaNomeEst(char **nome,FILE* arquivo, int index);
 
 #endif

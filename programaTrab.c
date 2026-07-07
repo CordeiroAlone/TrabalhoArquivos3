@@ -19,6 +19,7 @@
 #include "arvoreB/SELECT.h"
 #include "arvoreB/DELETE.h"
 #include "merge/SELECTDUPLO.h"
+#include "merge/SELECTUNICO.h"
 
 int main(void) {
     int comando;
@@ -115,6 +116,15 @@ int main(void) {
 
         scanf(" %s %s %s %s",lista1,temp,lista2,temp2);
         buscaDuplo(lista1,lista2);
+    } else if(comando == 12){
+        char lista1[40];
+        char lista2[40];
+        char temp[40];
+        char temp2[40];
+        char lista3[40];
+
+        scanf(" %s %s %s %s %s",lista1,temp,lista2,temp2,lista3);
+        buscaUnico(lista1,lista2,lista3);
     } else {
         printf("Comando Inválido\n");
     }
