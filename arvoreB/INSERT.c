@@ -1,6 +1,12 @@
 #include "INSERT.h"
 #include "BUSCAR.h"
 
+// Função auxiliar que insere a chave na pagina considerando a existencia de espaço livre
+
+// NoArvore *pag_at: Pagina para inserir a chave
+// int chave: chave a ser inserida
+// int pr: Byte offset no arquivo sequencial
+// int rrn_filho: RRN do filho que vai ficar a direita da inserção
 void inserir_chave_no(NoArvore *pag_at, int chave, int pr, int rrn_filho) {
     for(int i = pag_at->nroChaves-1; i >= -1; i--) { // desloca para direita
         if(i < 0 || chave >= pag_at->C[i]) {
@@ -16,6 +22,12 @@ void inserir_chave_no(NoArvore *pag_at, int chave, int pr, int rrn_filho) {
     pag_at->nroChaves++;
 }
 
+// Função recursiva que insere a chave e lida com os overflows
+
+// FILE *arquivo_ar: Arquivo da árvore onde ocorre a inserção
+// int chave: Chave a ser inserido 
+// int pr: Byte offset do arquivo sequencial
+// CabecalhoArvore* cabecalho: Cabecalho do arquivo da arvore
 bool INSERT_ARVORE(FILE *arquivo_ar, int chave, int pr, CabecalhoArvore* cabecalho) {
     if(arquivo_ar == NULL) return false; 
 
@@ -127,6 +139,17 @@ RetornoInsercao inserir_recursivo(FILE *arquivo_ar, int RRN, int chave, int pr, 
     return OVERFLOW;
 }
 
+// Faz o split de uma página que deu overflow. Promove a do meio e joga a maior para o novo nó.
+
+// int chave_at: Chave que causou o overflow
+// int offset_at: Byte offset da chave que fez o overflow
+// int child_at: RRN do filho à direita da chave que fez o overflow
+// NoArvore *pag_at: Página que sofreu overflow
+// int *chave_promovida: Chave a ser promovida após o split
+// int* pr_promovida: Byte offset da chave promovida
+// int *promo_rrn_child: Ponteiro onde será guardado o RRN da nova página da direita, para avisar ao pai.
+// NoArvore *pag_nova: Pagina nova criada
+// int novo_RRN: O RRN dessa página nova criada
 void split(int chave_at,int offset_at, int child_at, NoArvore *pag_at, int *chave_promovida, int* pr_promovida, int *promo_rrn_child, NoArvore *pag_nova, int novo_RRN){
     miniNo lista[4];
     bool jaInseriu = false;

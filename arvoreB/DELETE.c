@@ -5,6 +5,10 @@
 
 // Realiza a deleção de registros de estações e seus índices associados.
 // Essa função abre os arquivos de dados e de índice, valida o status de consistência de ambos, e realiza deleção várias vezes.
+
+// char *arquivoBIN: Noe do arquivo onde salva os dados sequenciais
+// char *arquivoBIN_ar: Nome do arquivo onde salva a árvore
+// int vezes: Quantidade de vezes que ocorre a deleção
 void DELETE_AR(char *arquivoBIN, char *arquivoBIN_ar, int vezes) {
 
     //Abertura dos arquivos e checando a consistência
@@ -96,6 +100,9 @@ void DELETE_AR(char *arquivoBIN, char *arquivoBIN_ar, int vezes) {
 
 // Verifica e atualiza a raiz da árvore-B caso ela fique sem chaves após deleções.
 // Se a raiz atual ficar vazia (0 chaves) devido a operações de concatenação, a função a marca como removida (adicionando-a à pilha de nós livres no topo do cabeçalho) e promove seu primeiro filho (se existir) como a nova raiz da árvore.
+
+// FILE* indice_arq: Arquivo onde se encontra a árvore
+// CabecalhoArvore* cabecalho_ar: Cabeçalho do arquivo da árvore
 void atualizar_raiz_se_vazia(FILE* indice_arq, CabecalhoArvore* cabecalho_ar) {
     int RRN_raiz_antiga = cabecalho_ar->noRaiz;
 
@@ -149,9 +156,14 @@ void atualizar_raiz_se_vazia(FILE* indice_arq, CabecalhoArvore* cabecalho_ar) {
 }
 
 
- // Itera sequencialmente pelo arquivo de dados e deleta os registros que satisfazem as condições de busca.
- // Para cada registro compatível encontrado, a função aciona a remoção de sua respectiva chave na Árvore-B e atualiza a estrutura do índice.
- // Essa função é análoga a função iterar_estacao feita no trabalho introdutório, com a diferença de servir somente para deleção e deletar na árvore após conseguir o código da estação.
+// Itera sequencialmente pelo arquivo de dados e deleta os registros que satisfazem as condições de busca.
+// Para cada registro compatível encontrado, a função aciona a remoção de sua respectiva chave na Árvore-B e atualiza a estrutura do índice.
+// Essa função é análoga a função iterar_estacao feita no trabalho introdutório, com a diferença de servir somente para deleção e deletar na árvore após conseguir o código da estação.
+
+// estacao* base: Estção que serve para verificar se uma estação deve ser deletada
+// FILE* arquivo: Arquivo onde está salvo os dados sequencialente
+// FILE* arquivo_ar: Arquivo onde está salvo os dados sequencialente
+// CabecalhoArvore* cabecalho_ar: Cabecalho do arquivo da arvore
 int deletar_sequencial(estacao* base, FILE* arquivo, FILE* arquivo_ar, CabecalhoArvore* cabecalho_ar) {
     // Lê o topo da pilha de registros removidos do arquivo de dados
     int topo;

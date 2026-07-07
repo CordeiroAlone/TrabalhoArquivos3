@@ -1,6 +1,7 @@
 #include "NO.h"
 #include "CABECALHO.h"
 
+// Função que cria o nó vazio
 NoArvore* criar_no(FILE* arquivo_ar, int tipo_no, CabecalhoArvore* cabecalho, int* rrn_alocado) {
     NoArvore *no = NULL;
 
@@ -29,6 +30,8 @@ NoArvore* criar_no(FILE* arquivo_ar, int tipo_no, CabecalhoArvore* cabecalho, in
     no->P[3] = -1;
     return no;
 }
+
+// Função que escreve no arquivo binário o nó novo
 void escrever_no(FILE *arquivo, NoArvore *no) {
     if (arquivo == NULL || no == NULL) return;
 

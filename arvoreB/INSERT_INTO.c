@@ -2,6 +2,9 @@
 #include "INSERT.h"
 #include "BUSCAR.h"
 
+// Le os dados digitados no terminal e retorna no est
+
+//  estacao* est: Variável que no final vira a estação desejada pelo input
 void lerlinha_ar(estacao* est) {
     est->removido = '0';
     est->proximo = -1;
@@ -41,6 +44,11 @@ void lerlinha_ar(estacao* est) {
     else est->codEstIntegra = atoi(temp);
 }
 
+// Insere elemento novo no arquivo da árvore e sequencial, várias vezes.
+
+// char *arquivoBIN: Arquivo dos dados guardado sequencialmente
+// char *arquivoBIN_ar: Arquivo dos dados guardado com a árvore-b
+// int vezes: Quantas vezes ocorre a inserção
 void INSERT_INTO(char *arquivoBIN,char *arquivoBIN_ar ,int vezes){
     FILE *arquivo = abrir_arquivo_validar(arquivoBIN, "rb+");
     if (arquivo == NULL) return;
@@ -67,6 +75,7 @@ void INSERT_INTO(char *arquivoBIN,char *arquivoBIN_ar ,int vezes){
 
     CabecalhoArvore* cabecalho = ler_cabecalho(arquivo_ar);
 
+    // Faz a inserção várias vezes
     for(int i = 0; i < vezes; i++){
         estacao est;
 

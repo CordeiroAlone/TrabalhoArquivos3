@@ -24,17 +24,19 @@ bool buscar_no(int key, NoArvore *p_page, int *pos) {
 // int *found_pos: Retorna a posição dentro da pagina onde se encontra a chave
 // Retorno: true se encontrar e false se não encontrar.
 bool busca_arvoreB(FILE* arquivo, int RRN, int key, int *found_RRN, int *found_pos) {
-    if (RRN == -1) return false;
+    if (RRN == -1) return false; // Se tiver numa pagina invalida, retorna
 
     fseek(arquivo, get_offset(RRN), SEEK_SET);
     NoArvore* page = ler_no(arquivo);
-    if(page->removido == '1') {
+
+    if(page->removido == '1') { // Se tiver numa pagina removida, retorna
         free(page);
         page = NULL;
         return false;
     }
 
     int pos;
+    // Found representa se a chave está na pagina atual. Se tiver, atualizamos o found_RRN e found_pos e se nao tiver, passamos para a proxima pagina a partir do filho da pos retornada.
     bool found = buscar_no(key, page, &pos);
     
     *found_RRN = RRN;

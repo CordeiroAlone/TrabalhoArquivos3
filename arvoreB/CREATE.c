@@ -2,6 +2,10 @@
 #include "INSERT.h"
 #include "../TAD/fornecidas.h"
 
+// Função usada para criar uma árvore, no arquivo de escrita bin_arvore
+
+// char *bin_lista: Nome do arquivo onde estão os dados sequenciais
+// char *bin_arvore: Nome do arquivo onde deve ser guardado a árvore
 void criar_arvore(char *bin_lista, char *bin_arvore) {
     //abertura dos arquivos e verificação se é valido
     FILE *arquivo_ar = fopen(bin_arvore, "wb+");

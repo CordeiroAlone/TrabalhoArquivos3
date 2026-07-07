@@ -1,7 +1,15 @@
 #include "DELETE_ONE.h"
 #include "CABECALHO.h"
 
-// Remove uma chave de um NÓ(página) folha da árvore
+// Remove uma chave de um NÓ(página) folha da árvore, deslocando os elementos, e depois deleta do arquivo de dados
+
+// NoArvore* pag_at: Página atual de onde deve ser retirado a chave
+// int pos: índice de onde a chave se encontra dentro da pagina
+// FILE* arquivo_dados: Arquivo onde está salvo sequencialmente os dados
+// estacao* temp: Struct com os critérios de busca.
+// int* pares removidos: No final será atualizado para quantos pares foram removidos
+
+// Retorno: True se foi feito a remoção e false se não.
 bool remover_chave_no(NoArvore* pag_at, int pos, FILE* arquivo_dados, estacao* temp, int* pares_removidos) {
     int offset_dados = pag_at->PR[pos]; // PR é o ponteiro para o arquivo de dados
     
@@ -53,8 +61,15 @@ bool remover_chave_no(NoArvore* pag_at, int pos, FILE* arquivo_dados, estacao* t
 
     return true;
 }
-
 // Função recursiva para buscar e deletar UMA chave na árvore
+// FILE* arquivo_ar: Ponteiro para o arquivo de índice da árvore-b
+// FILE* arquivo_dados: Arquivo de dados sequencial
+// int RRN: RRN da página atual na descida da árvore
+// int chave: Código da estação a ser deletada
+// CabecalhoArvore* cabecalho: Ponteiro para o cabeçalho da árvore
+// estacao* temp: Condições extras de busca para confirmar a deleção (se NULL, deleta apenas pela chave).
+// int* pares_removidos: Ponteiro para contar quantos pares de estações foram apagados
+// Retorno: D_NORMAL se removeu, D_UNDERFLOW se a página ficou com menos chaves que o mínimo, D_ERROR se não tiver nada para deletar
 RetornoDelecao deletar_recursivo(FILE *arquivo_ar, FILE* arquivo_dados, int RRN, int chave, CabecalhoArvore* cabecalho, estacao* temp, int* pares_removidos) {
     if(RRN == -1) {
         return D_ERROR; // Chegou no final da árvore: não encontrou a chave
@@ -154,6 +169,11 @@ RetornoDelecao deletar_recursivo(FILE *arquivo_ar, FILE* arquivo_dados, int RRN,
 
 // Busca recursivamente a chave sucessora imediata de uma chave localizada num nó interno.
 // (menor chave contida na subárvore à direita da chave original, ou seja, vai para o filho da direita e depois segue ao máximo para esquerda)
+
+// FILE* arquivo_ar: Arquivo da árvore-b
+// int RRN: RRN da página atual na descida
+// int* chave_sucessora: No final retorna a chave sucessora da folha
+// int* pr_sucessor: No final, guarda o PR(offset) da chave sucessora
 void encontrar_sucessor(FILE *arquivo_ar, int RRN, int *chave_sucessora, int *pr_sucessor) {
     if(RRN == -1) { // Já passou da folha, então só retorna sem atualizar nada.
         return;
@@ -174,6 +194,12 @@ void encontrar_sucessor(FILE *arquivo_ar, int RRN, int *chave_sucessora, int *pr
 }
 
 // Trata o underflow de um nó filho, tentando rotacionar ou concatenar, seguindo a ordem especificada.
+
+// FILE* arquivo_ar: Arquivo da árvore-b
+// NoArvore* pai: Nó pai do que sofreu o underflow
+// int idx_filho: Indice no vetor (P) do pai onde se encontra o filho
+// int RRN_pai: RRN do nó pai
+// CabecalhoArvore* cabecalho: O cabecalho da do arquivo da árvore-b
 RetornoDelecao tratar_underflow(FILE *arquivo_ar, NoArvore *pai, int idx_filho, int RRN_pai, CabecalhoArvore* cabecalho) {
     fseek(arquivo_ar, get_offset(pai->P[idx_filho]), SEEK_SET);
     NoArvore* filho = ler_no(arquivo_ar);
@@ -303,6 +329,11 @@ RetornoDelecao tratar_underflow(FILE *arquivo_ar, NoArvore *pai, int idx_filho, 
 }
 
 // Realiza a redistribuição de chaves (rotação à direita) pegando emprestado do irmão à esquerda
+
+// NoArvore* filho: Nó que está sofrendo underflow
+// NoArvore* pai: Nó pai do que está sofrendo underflow
+// NoArvore* irmao_esq: Ponteiro para o irmão da esquerda, que tem chaves sobrando
+// int id_esq: Índice do irmão da esquerda no nó pai
 void rotaciona_direita(NoArvore* filho, NoArvore* pai, NoArvore* irmao_esq, int id_esq) {
     // Divide a qtd de nós na metade
     int total_chaves = filho->nroChaves + 1 + irmao_esq->nroChaves;
@@ -332,7 +363,12 @@ void rotaciona_direita(NoArvore* filho, NoArvore* pai, NoArvore* irmao_esq, int 
     }
 }
 
-// Análogo a rotação direita, exceto na part de deslocamento
+// Análogo a rotação direita, exceto na parte de deslocamento
+
+// NoArvore* filho: Nó que está sofrendo underflow
+// NoArvore* pai: Nó pai do que está sofrendo underflow
+// NoArvore* irmao_dir: Ponteiro para o irmão da direita, que tem chaves sobrando
+// int id_dir: Índice do irmão da direita no nó pai
 void rotaciona_esquerda(NoArvore* filho, NoArvore* pai, NoArvore* irmao_dir, int idx_filho) {
     int total_chaves = filho->nroChaves + 1 + irmao_dir->nroChaves;
     int chaves_para_filho = total_chaves / 2; 
@@ -364,6 +400,12 @@ void rotaciona_esquerda(NoArvore* filho, NoArvore* pai, NoArvore* irmao_dir, int
 }
 
 // Realiza a concatenação de um nó filho com seu irmão adjacente à esquerda.
+
+// NoArvore* filho: Nó que está sofrendo underflow
+// NoArvore* pai: Nó pai do que está sofrendo underflow
+// NoArvore* irmao_esq: Ponteiro para o irmão da esquerda, vai receber a chave do pai e os dados do filho
+// int id_esq: Índice do irmão da esquerda no nó pai
+// CabecalhoArvore* cabecalho: Cabecalho do arquivo da árvore-b
 void concatena_esquerda(NoArvore* filho, NoArvore* pai, NoArvore* irmao_esq, int id_esq, CabecalhoArvore* cabecalho) {
 
     // Chave do pai vai para posição 1 do irmao (que tem exatamente uma chave, pois chegou na concatenação)
@@ -390,7 +432,14 @@ void concatena_esquerda(NoArvore* filho, NoArvore* pai, NoArvore* irmao_esq, int
 }
 
 // Análogo a concatena_esquerda.
+
+// NoArvore* filho: Nó que está sofrendo underflow, vai receber a chave do pai e os dados do irmao da direita
+// NoArvore* pai: Nó pai do que está sofrendo underflow
+// NoArvore* irmao_dir: Ponteiro para o irmão da direita
+// int idx_filho: Índice do filho no nó pai
+// CabecalhoArvore* cabecalho: Cabecalho do arquivo da árvore-b
 void concatena_direita(NoArvore* filho, NoArvore* pai, NoArvore* irmao_dir, int idx_filho, CabecalhoArvore* cabecalho) {
+    // A lógica da concatenação é análoga a função de cima, apenas mudando o nó que vai ser deletado e o nó que recebe os dados
     filho->C[0] = pai->C[idx_filho];
     filho->PR[0] = pai->PR[idx_filho];
 
