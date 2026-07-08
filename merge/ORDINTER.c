@@ -29,7 +29,6 @@ void ordintercala(char *bin1, char *bin2){
             encontrado = true;
             printf("%d %s %s %d %s\n",lista1[id1].codEstacao, lista1[id1].nomeEstacao, lista1[id1].nomeLinha, lista1[id1].codProxEstacao, lista2[id2].nomeEstacao);
             id1++;
-            id2++; //considerando que é unico o proximo estação
         }else if(lista1[id1].codProxEstacao > lista2[id2].codEstacao) id2++;
         else id1++;
     }
